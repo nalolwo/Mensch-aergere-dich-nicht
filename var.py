@@ -1,10 +1,8 @@
-username = ""
 wuerfel = 0
 anzahl_computer = 2
 computer_v = 1
 anzahl_mensch = 2
 COLORS_1 = ["red", "blue", "green", "yellow"]
-simulation = False
 pieces = []
 gewonnen = False
 noch_ein_zug = False

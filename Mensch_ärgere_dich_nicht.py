@@ -92,8 +92,6 @@ def move_piece(piece):
         else:
             if gewonnen(var.spieler):
                 add_text(f"Spieler {COLORS[var.spieler]} hat gewonnen!")
-                if var.simulation:
-                    root.after(100, restart)
                 return # Damit der Gewinner angezeigt wird
     
     if not zugzwang_kontrolle:                
@@ -179,13 +177,12 @@ def change_player():
     if var.auto_wuerfeln.get() == True and not var.spieler >= var.anzahl_mensch: # type: ignore
         auto_würfeln()
     
-    if not var.simulation:
-        add_text("")
-        change_player_label(f"Spieler: {COLORS[var.spieler]}")
-        create_rectangle(canvas)
-        default_bg = tk.Button().cget("bg")
-        for i in range(4):
-            figuren_buttons[i].config(bg=default_bg)
+    add_text("")
+    change_player_label(f"Spieler: {COLORS[var.spieler]}")
+    create_rectangle(canvas)
+    default_bg = tk.Button().cget("bg")
+    for i in range(4):
+        figuren_buttons[i].config(bg=default_bg)
     
     if (var.spieler >= var.anzahl_mensch):
         computer_player()
@@ -244,8 +241,7 @@ def create_rectangle(canvas):
 # ------------------------------------------------- Computergegner -----------------------------------------------------------------------
 def computer_player():
     global computer_piece, figuren_buttons
-    if not var.simulation:
-        add_text(f"Computer {var.spieler+1} ist am Zug! Bitte keine Buttons betätigen!")
+    add_text(f"Computer {var.spieler+1} ist am Zug! Bitte keine Buttons betätigen!")
     if zugzwang():
         root.after(var.computer_v.get(), figuren_buttons[computer_piece].invoke) # type: ignore
     else:
@@ -270,13 +266,11 @@ def zugzwang():
         if bewegung_möglich:
             var.anzahl_zuege += 1
             muss_gehen = True
-            if not var.simulation:
-                figuren_buttons[i].config(bg="green")
+            figuren_buttons[i].config(bg="green")
             computer_piece = i
             bewegung_möglich = False
         else:
-            if not var.simulation:
-                figuren_buttons[i].config(bg="red")
+            figuren_buttons[i].config(bg="red")
     zugzwang_kontrolle = False
     
     if (var.anzahl_zuege == 1 
@@ -304,8 +298,7 @@ def roll_dice():
         var.wuerfel = random.randint(1, 6)
         if var.wuerfel == 6:
             var.noch_ein_zug = True
-        if not var.simulation:
-            dice_label.config(text=f"Gewürfelt: {var.wuerfel}")
+        dice_label.config(text=f"Gewürfelt: {var.wuerfel}")
         zugzwang()
         wuerfel_wuerfe += 1
 
@@ -354,13 +347,12 @@ def restart():
     dice_label.config(text="Gewürfelt: -")
     
     change_player_label(f"Spieler: {COLORS[var.spieler]}")
-    if not var.simulation:
-        add_text("")
-        create_rectangle(canvas)
+    add_text("")
+    create_rectangle(canvas)
 
-        default_bg = tk.Button().cget("bg")
-        for i in range(4):
-            figuren_buttons[i].config(bg=default_bg)
+    default_bg = tk.Button().cget("bg")
+    for i in range(4):
+        figuren_buttons[i].config(bg=default_bg)
     
     for button in figuren_buttons:
         button.config(state="normal")
@@ -450,8 +442,7 @@ def main():
     # Das Spielfeld und die Figuren erstellen
     create_board(canvas, SIZE, OFFSET)
     create_pieces(canvas, SIZE, OFFSET, on_piece_click)
-    if not var.simulation:
-        create_rectangle(canvas)
+    create_rectangle(canvas)
     
     if var.anzahl_computer == 4:
         root.after(100, computer_player)

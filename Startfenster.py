@@ -33,7 +33,6 @@ def starte_konfiguration():
         if var.computer_v.get() > 2000 or var.computer_v.get() < 0: # pyright: ignore[reportAttributeAccessIssue]
             fehler_label.config(text = "Bitte eine gültige Zahl für die Geschwindigkeit eingeben!")
         else:
-            var.simulation = True
             konfig_fenster.destroy()
             main_sim()
 

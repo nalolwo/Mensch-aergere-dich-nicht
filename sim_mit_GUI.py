@@ -5,7 +5,6 @@ import random
 import var
 
 wuerfel_wuerfe = 0
-#computer_piece = None
 rect = None
 SIZE = 55
 OFFSET = 10
@@ -92,9 +91,6 @@ def move_piece(piece):
             if gewonnen(var.spieler):
                 add_text(f"Spieler {COLORS[var.spieler]} hat gewonnen!")
                 return # Damit der Gewinner angezeigt wird
-    
-    # if not zugzwang_kontrolle:                
-    #     change_player()
 
 # ------------------------------------------------- Bewegung der Spielfiguren ------------------------------------------------------------
 def move_piece_to(piece, position):
