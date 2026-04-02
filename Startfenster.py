@@ -79,11 +79,6 @@ def starte_konfiguration():
     fehler_label = tk.Label(konfig_fenster, text="", fg="red")
     fehler_label.grid(row=3, columnspan=2)
 
-    # Spielort wählen
-    tk.Label(konfig_fenster, text="Wollen sie lokal oder online spielen?").grid(row=4, column=0, padx=10, pady=10)
-    local_button = tk.Button(konfig_fenster, text="Lokal", width=10)
-    local_button.grid(row=4, column=1)
-
     var.auto_zuege = tk.BooleanVar(value=True)
     check = ttk.Checkbutton(konfig_fenster, text="Auto-Zug bei nur einer Möglichkeit", variable=var.auto_zuege)
     check.grid(row=5, columnspan=1, sticky= "w", pady=10)
