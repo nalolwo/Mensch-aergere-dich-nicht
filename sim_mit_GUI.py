@@ -283,18 +283,9 @@ def main_sim():
     global root, canvas, output_label, COLORS
     root = tk.Tk()
     root.title("Mensch ärgere dich nicht")
-    root.overrideredirect(True) ###
-
-    #### Transparente Farbe
-    TRANSPARENT = tk.Button().cget("bg")
-    root.configure(bg=TRANSPARENT)
-    try:
-        root.wm_attributes("-transparentcolor", TRANSPARENT)
-    except tk.TclError:
-        pass  # Transparenz wird möglicherweise nicht von allen Systemen unterstützt, daher Fehler ignorieren
-
+    
     # Haupt-Container
-    main_frame = tk.Frame(root, bg=TRANSPARENT, highlightthickness=0, bd=0)
+    main_frame = tk.Frame(root, highlightthickness=0, bd=0)
     main_frame.pack(fill=tk.BOTH, expand=True)
 
     # Textfeld für Ausgaben
@@ -306,58 +297,13 @@ def main_sim():
     output_label.pack(side=tk.LEFT, padx=10)
 
     # Canvas für das Spielfeld
-    canvas = tk.Canvas(main_frame, width=650, height=630, bg=TRANSPARENT, highlightthickness=0, bd=0)
+    canvas = tk.Canvas(main_frame, width=650, height=630, highlightthickness=0, bd=0)
     canvas.pack(side=tk.LEFT, expand=False, fill=tk.BOTH)
-
-    # ======================
-    # Fenster verschiebbar
-    # ======================
-    def start_move(event):
-        root.x_offset = event.x # type: ignore
-        root.y_offset = event.y # type: ignore
-
-    def do_move(event):
-        x = event.x_root - root.x_offset # type: ignore
-        y = event.y_root - root.y_offset # type: ignore
-        root.geometry(f"+{x}+{y}")
-
-    canvas.bind("<Button-1>", start_move)
-    canvas.bind("<B1-Motion>", do_move)
 
     # Das Spielfeld und die Figuren erstellen
     create_board(canvas, SIZE, OFFSET)
     create_pieces(canvas, SIZE, OFFSET, on_piece_click)
     
-    # Größe des Kreuzes
-    CLOSE_SIZE = 18
-    MARGIN = 8
-
-    def draw_close_button():
-        x1 = 640 - CLOSE_SIZE - MARGIN
-        y1 = MARGIN
-        x2 = x1 + CLOSE_SIZE
-        y2 = y1 + CLOSE_SIZE
-
-        # Hintergrund (optional)
-        bg = canvas.create_rectangle(
-            x1 - 4, y1 - 4, x2 + 4, y2 + 4,
-            fill="white",
-            outline="black",
-            width=1
-        )
-
-        # Kreuz
-        l1 = canvas.create_line(x1, y1, x2, y2, width=2)
-        l2 = canvas.create_line(x1, y2, x2, y1, width=2)
-
-        # Klickfläche
-        for item in (bg, l1, l2):
-            canvas.tag_bind(item, "<Button-1>", lambda e: root.destroy())
-            canvas.tag_bind(item, "<Enter>", lambda e: canvas.config(cursor="hand2"))
-            canvas.tag_bind(item, "<Leave>", lambda e: canvas.config(cursor=""))
-
-    draw_close_button()
-
     root.after(100, controller)
 
     root.mainloop()
