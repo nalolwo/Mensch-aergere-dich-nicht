@@ -184,7 +184,8 @@ def change_player():
         change_player_label(f"Spieler: {COLORS[var.spieler]}")
         create_rectangle(canvas)
         for i in range(4):
-            figuren_buttons[i].config(bg="SystemButtonFace")
+            default_bg = tk.Button().cget("bg")
+            figuren_buttons[i].config(bg=default_bg)
     
     if (var.spieler >= var.anzahl_mensch):
         computer_player()
@@ -381,7 +382,6 @@ def main():
     global roll_button, player_label, COLORS, dice_label
     root = tk.Tk()
     root.title("Mensch ärgere dich nicht")
-    root.wm_state('zoomed')  # Vollbild-Modus
 
     # Haupt-Container
     main_frame = tk.Frame(root)
