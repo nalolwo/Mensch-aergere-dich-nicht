@@ -359,7 +359,8 @@ def restart():
         create_rectangle(canvas)
 
         for i in range(4):
-            figuren_buttons[i].config(bg="SystemButtonFace")
+            default_bg = tk.Button().cget("bg")
+            figuren_buttons[i].config(bg=default_bg)
     
     for button in figuren_buttons:
         button.config(state="normal")
