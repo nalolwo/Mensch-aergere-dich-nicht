@@ -183,8 +183,8 @@ def change_player():
         add_text("")
         change_player_label(f"Spieler: {COLORS[var.spieler]}")
         create_rectangle(canvas)
+        default_bg = tk.Button().cget("bg")
         for i in range(4):
-            default_bg = tk.Button().cget("bg")
             figuren_buttons[i].config(bg=default_bg)
     
     if (var.spieler >= var.anzahl_mensch):
@@ -358,8 +358,8 @@ def restart():
         add_text("")
         create_rectangle(canvas)
 
+        default_bg = tk.Button().cget("bg")
         for i in range(4):
-            default_bg = tk.Button().cget("bg")
             figuren_buttons[i].config(bg=default_bg)
     
     for button in figuren_buttons:
