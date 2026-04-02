@@ -283,13 +283,15 @@ def main_sim():
     global root, canvas, output_label, COLORS
     root = tk.Tk()
     root.title("Mensch ärgere dich nicht")
-    # root.wm_state('zoomed')  # Vollbild-Modus
     root.overrideredirect(True) ###
 
     #### Transparente Farbe
-    TRANSPARENT = "magenta"
+    TRANSPARENT = tk.Button().cget("bg")
     root.configure(bg=TRANSPARENT)
-    root.attributes("-transparentcolor", TRANSPARENT)
+    try:
+        root.wm_attributes("-transparentcolor", TRANSPARENT)
+    except tk.TclError:
+        pass  # Transparenz wird möglicherweise nicht von allen Systemen unterstützt, daher Fehler ignorieren
 
     # Haupt-Container
     main_frame = tk.Frame(root, bg=TRANSPARENT, highlightthickness=0, bd=0)
