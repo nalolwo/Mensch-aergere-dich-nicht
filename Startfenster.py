@@ -81,7 +81,7 @@ def starte_konfiguration():
 
     # Spielort wählen
     tk.Label(konfig_fenster, text="Wollen sie lokal oder online spielen?").grid(row=4, column=0, padx=10, pady=10)
-    local_button = tk.Button(konfig_fenster, text="🔵 Lokal", width=10)
+    local_button = tk.Button(konfig_fenster, text="Lokal", width=10)
     local_button.grid(row=4, column=1)
 
     var.auto_zuege = tk.BooleanVar(value=True)
