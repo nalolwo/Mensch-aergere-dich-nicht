@@ -1,15 +1,15 @@
-username = None
+username = ""
 wuerfel = 0
-anzahl_computer = None
+anzahl_computer = 2
 computer_v = 1
-anzahl_mensch = None
+anzahl_mensch = 2
 COLORS_1 = ["red", "blue", "green", "yellow"]
 simulation = False
 pieces = []
 gewonnen = False
 noch_ein_zug = False
-auto_zuege = False
-auto_wuerfeln = False
+auto_zuege = True
+auto_wuerfeln = True
 anzahl_zuege = 0
 spieler = 0
 

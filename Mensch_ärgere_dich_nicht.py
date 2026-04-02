@@ -5,8 +5,7 @@ import random
 import var
 
 wuerfel_wuerfe = 0
-piece_schlagen = None
-computer_piece = None
+computer_piece = 0
 rect = None
 SIZE = 55
 OFFSET = 10
@@ -41,7 +40,7 @@ def move_piece(piece):
         return
 
     if check_start(piece):
-        if (var.wuerfel == 6 and check_free_position(GO_POSITIONS[var.spieler*10])):
+        if (var.wuerfel == 6 and check_free_position(GO_POSITIONS[var.spieler*10]) is None):
             zugzwang_oder_move(piece, GO_POSITIONS[var.spieler*10])
         
         elif var.wuerfel != 6:
@@ -49,23 +48,29 @@ def move_piece(piece):
             return
         
         else:
-            if not piece_schlag(piece):
-                return
+            occupying_piece = check_free_position(GO_POSITIONS[var.spieler*10])
+            if occupying_piece is not None:
+                if not piece_schlag(piece, occupying_piece):
+                    return
     
     elif check_goal(piece):
         i = next((idx for idx, pos in enumerate(GOAL_POSITIONS[var.spieler]) if piece["position"] == pos), None)
+        if i is None:
+            add_text("Fehler: Position im Zielbereich nicht gefunden!")
+            print("Fehler", var.spieler, piece)
+            return
         ziel_index = i + var.wuerfel
         if ziel_index > 3:
             add_text("Bewegung nicht möglich!")
             return
         
-        if not check_free_position(GOAL_POSITIONS[var.spieler][i+var.wuerfel]):
+        if check_free_position(GOAL_POSITIONS[var.spieler][i+var.wuerfel]) is not None:
             add_text("Zielposition ist besetzt!")
             return
         
         # Prüfen, ob alle Felder bis zum Ziel frei sind
         if var.wuerfel > 1:
-            if all(check_free_position(GOAL_POSITIONS[var.spieler][k]) for k in range(i + 1, ziel_index)):
+            if all(check_free_position(GOAL_POSITIONS[var.spieler][k]) is None for k in range(i + 1, ziel_index)):
                 zugzwang_oder_move(piece, GOAL_POSITIONS[var.spieler][ziel_index])
             
             else:
@@ -77,10 +82,11 @@ def move_piece(piece):
     else:
         position_neu = neue_position(var.wuerfel, piece)
         if not zieleinlauf_möglich(piece, position_neu):
-            if check_free_position(GO_POSITIONS[position_neu]):
+            occupying_piece = check_free_position(GO_POSITIONS[position_neu])
+            if occupying_piece is None:
                 zugzwang_oder_move(piece, GO_POSITIONS[position_neu])
             
-            elif not piece_schlag(piece):
+            elif not piece_schlag(piece, occupying_piece):
                 return
 
         else:
@@ -105,22 +111,22 @@ def move_piece_to(piece, position):
     piece["position"] = [x, y]
 
 # ------------------------------------------------- Figur schlagen -----------------------------------------------------------------------
-def piece_schlag(piece):
+def piece_schlag(piece, occupying_piece):
     from var import START_POSITIONS, GO_POSITIONS
-    global piece_schlagen, zugzwang_kontrolle
-    if piece_schlagen["spieler"] == var.spieler:
+    global zugzwang_kontrolle
+    if occupying_piece["spieler"] == var.spieler:
         add_text("Sie können nicht ihre eigenen Figuren schlagen!")
         return False
     
-    piece_schlagen_spieler = piece_schlagen["spieler"]
-    if piece_schlagen["position"] == GO_POSITIONS[piece_schlagen_spieler*10]:
+    occupying_piece_spieler = occupying_piece["spieler"]
+    if occupying_piece["position"] == GO_POSITIONS[occupying_piece_spieler*10]:
         add_text("Figur ist auf eigenem Startfeld sicher!")
         return False
     
-    zugzwang_oder_move(piece, piece_schlagen["position"])
+    zugzwang_oder_move(piece, occupying_piece["position"])
     
     if not zugzwang_kontrolle:
-        move_piece_to(piece_schlagen, START_POSITIONS[piece_schlagen["spieler"]][piece_schlagen["piece_number"]-1])
+        move_piece_to(occupying_piece, START_POSITIONS[occupying_piece["spieler"]][occupying_piece["piece_number"]-1])
     return True
 
 # ------------------------------------------------- Überprüfen, ob Zieleinlauf möglich ist -----------------------------------------------
@@ -137,8 +143,8 @@ def zieleinlauf_möglich(piece, position_neu):
 
     # Prüfen, ob ein Zielfeld erreicht werden kann und alle Felder davor frei sind
     for j in range(4):
-        if GO_POSITIONS[position_neu] == GO_POSITIONS[spieler * 10 + j] and check_free_position(GOAL_POSITIONS[spieler][j]):
-            if all(check_free_position(GOAL_POSITIONS[spieler][k]) for k in range(j)):
+        if GO_POSITIONS[position_neu] == GO_POSITIONS[spieler * 10 + j] and check_free_position(GOAL_POSITIONS[spieler][j]) is None:
+            if all(check_free_position(GOAL_POSITIONS[spieler][k]) is None for k in range(j)):
                 zugzwang_oder_move(piece, GOAL_POSITIONS[spieler][j])
                 return True
     return False
@@ -170,7 +176,7 @@ def change_player():
     else:
         var.noch_ein_zug = False
 
-    if var.auto_wuerfeln.get() == True and not var.spieler >= var.anzahl_mensch:
+    if var.auto_wuerfeln.get() == True and not var.spieler >= var.anzahl_mensch: # type: ignore
         auto_würfeln()
     
     if not var.simulation:
@@ -200,9 +206,7 @@ def check_position(player):
 
 # ------------------------------------------------- Überprüfen, ob Position frei ist------------------------------------------------------
 def check_free_position(position):
-    global piece_schlagen
-    piece_schlagen = next((piece for piece in var.pieces if tuple(piece["position"]) == tuple(position)), None)
-    return piece_schlagen is None
+    return next((piece for piece in var.pieces if tuple(piece["position"]) == tuple(position)), None)
 
 # ------------------------------------------------- Berechnung der neuen Position --------------------------------------------------------
 def neue_position(wuerfel, piece):
@@ -242,13 +246,13 @@ def computer_player():
     if not var.simulation:
         add_text(f"Computer {var.spieler+1} ist am Zug! Bitte keine Buttons betätigen!")
     if zugzwang():
-        root.after(var.computer_v.get(), figuren_buttons[computer_piece].invoke)
+        root.after(var.computer_v.get(), figuren_buttons[computer_piece].invoke) # type: ignore
     else:
-        root.after(var.computer_v.get(), roll_button.invoke)
+        root.after(var.computer_v.get(), roll_button.invoke) # type: ignore
 
 # -------------------------------------------------------------------------------------------------------
 def auto_würfeln():
-    root.after(var.computer_v.get(), roll_button.invoke)
+    root.after(var.computer_v.get(), roll_button.invoke) # type: ignore
 
 # ------------------------------------------------- Zugzwang -----------------------------------------------------------------------------
 def zugzwang():
@@ -275,10 +279,10 @@ def zugzwang():
     zugzwang_kontrolle = False
     
     if (var.anzahl_zuege == 1 
-        and var.auto_zuege.get() == True 
+        and var.auto_zuege.get() == True  # type: ignore
         and not var.spieler >= var.anzahl_mensch
         ):
-        root.after(var.computer_v.get(), figuren_buttons[computer_piece].invoke)
+        root.after(var.computer_v.get(), figuren_buttons[computer_piece].invoke) # type: ignore
     
     return muss_gehen
 
@@ -306,7 +310,7 @@ def roll_dice():
 
         if (var.spieler >= var.anzahl_mensch):
             computer_player()
-        elif var.auto_wuerfeln.get() == True and var.anzahl_zuege == 0:
+        elif var.auto_wuerfeln.get() == True and var.anzahl_zuege == 0: # type: ignore
             auto_würfeln()
 
 # ------------------------------------------------- Funktion zum Einfügen von Text -------------------------------------------------------
@@ -366,7 +370,7 @@ def restart():
     if var.anzahl_computer == 4:
         computer_player()
     else:
-        if var.auto_wuerfeln.get() == True:
+        if var.auto_wuerfeln.get() == True: # type: ignore
             auto_würfeln()
         else:
             add_text(f"Spieler {var.spieler+1} ist am Zug! Bitte würfeln!")
@@ -451,7 +455,7 @@ def main():
     if var.anzahl_computer == 4:
         root.after(100, computer_player)
     else:
-        if var.auto_wuerfeln.get() == True:
+        if var.auto_wuerfeln.get() == True: # type: ignore
             auto_würfeln()
         else:
             add_text(f"Spieler {var.spieler+1} ist am Zug! Bitte würfeln!")

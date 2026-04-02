@@ -17,7 +17,7 @@ def starte_konfiguration():
             var.anzahl_computer = int(entry_computer.get())
             if (var.anzahl_mensch + var.anzahl_computer) > 4:
                 fehler_label.config(text="Die Summe darf maximal 4 sein!") # Überprüfen, ob die Summe 4 ergibt
-            elif var.computer_v.get() > 2000 or var.computer_v.get() < 0:
+            elif var.computer_v.get() > 2000 or var.computer_v.get() < 0: # pyright: ignore[reportAttributeAccessIssue]
                 fehler_label.config(text = "Bitte eine gültige Zahl für die Geschwindigkeit eingeben!")
             else:
                 konfig_fenster.destroy()  # Konfigurationsfenster schließen
@@ -30,7 +30,7 @@ def starte_konfiguration():
     def starte_simulation():
         var.anzahl_mensch = 0
         var.anzahl_computer = 4
-        if var.computer_v.get() > 2000 or var.computer_v.get() < 0:
+        if var.computer_v.get() > 2000 or var.computer_v.get() < 0: # pyright: ignore[reportAttributeAccessIssue]
             fehler_label.config(text = "Bitte eine gültige Zahl für die Geschwindigkeit eingeben!")
         else:
             var.simulation = True
@@ -71,7 +71,7 @@ def starte_konfiguration():
         command=update_computer)
     entry_computer.grid(row=1, column=1)
 
-    var.computer_v = tk.IntVar(value = 1000)
+    var.computer_v = tk.IntVar(value = 1)
     tk.Label(konfig_fenster, text="Computer Geschwindigkeit(0-2000):").grid(row=2, column=0, padx=10, pady=10)
     entry_computer_v = tk.Entry(konfig_fenster, textvariable = var.computer_v)
     entry_computer_v.grid(row=2, column=1)
