@@ -18,8 +18,8 @@ python Startfenster.py
 
 ## ⚠️ Wichtiger Hinweis zur Kompatibilität
 
-Dieses Projekt wurde hauptsächlich unter **Windows** entwickelt und getestet.
-Es kann daher sein, dass das Programm auf anderen Betriebssystemen (z. B. Linux oder macOS) **nicht korrekt funktioniert** oder Anpassungen erforderlich sind.
+Dieses Projekt wurde unter **Windows** und **Linux** entwickelt und getestet.
+Es kann daher sein, dass das Programm auf anderen Betriebssystemen (z. B. macOS) **nicht korrekt funktioniert** oder Anpassungen erforderlich sind.
 
 ## 📦 Voraussetzungen
 
